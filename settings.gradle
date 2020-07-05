@@ -1,2 +1,4 @@
 rootProject.name = 'maxwell-bq-producer'
+include 'maxwell'
+include 'core'
 

@@ -1,0 +1,3 @@
+[submodule "maxwell"]
+	path = maxwell
+	url = git@github.com:mark3-designs/maxwell.git
