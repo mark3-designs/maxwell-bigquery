@@ -1,6 +1,7 @@
 package com.steckytech.maxwell;
 
 import com.steckytech.maxwell.cdc.DDL;
+import com.zendesk.maxwell.MaxwellContext;
 import com.zendesk.maxwell.producer.AbstractAsyncProducer;
 import com.zendesk.maxwell.schema.ddl.DDLMap;
 
@@ -12,8 +13,8 @@ public class DDLEvent extends CDCEvent {
 
     private final DDLMap ddl;
 
-    public DDLEvent(String dataset, DDLMap data, AbstractAsyncProducer.CallbackCompleter completer) {
-        super(dataset, data, completer);
+    public DDLEvent(MaxwellContext context, String dataset, DDLMap data, AbstractAsyncProducer.CallbackCompleter completer) {
+        super(context, dataset, data, completer);
         this.ddl = data;
         this.changeType = DDL.valueOf(((String)(data.getChangeMap().get("type"))).replaceAll("-", "_"));
     }

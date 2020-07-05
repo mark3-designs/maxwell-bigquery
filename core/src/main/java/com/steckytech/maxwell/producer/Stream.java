@@ -16,13 +16,13 @@ import javax.annotation.PreDestroy;
 import java.util.Observable;
 import java.util.Observer;
 
-public class CDCStream extends AbstractAsyncProducer implements Observer {
+public class Stream extends AbstractAsyncProducer implements Observer {
 
     private DatasetMap config;
     private final Collector collector;
 
 
-    public CDCStream(MaxwellContext context, DatasetMap config, MessageHandler handler) {
+    public Stream(MaxwellContext context, DatasetMap config, MessageHandler handler) {
         super(context);
         this.config = config;
         this.collector = new Collector(context, handler);
@@ -47,9 +47,9 @@ public class CDCStream extends AbstractAsyncProducer implements Observer {
             r.setPartitionString(r.getDatabase());
         }
         if (r instanceof DDLMap) {
-            collector.collect(new DDLEvent(targetDataset, (DDLMap)r, callback));
+            collector.collect(new DDLEvent(context, targetDataset, (DDLMap)r, callback));
         } else {
-            collector.collect(new CDCEvent(targetDataset, r, callback));
+            collector.collect(new CDCEvent(context, targetDataset, r, callback));
         }
 
     }

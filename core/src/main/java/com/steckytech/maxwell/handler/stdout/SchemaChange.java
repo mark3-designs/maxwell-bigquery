@@ -13,7 +13,7 @@ public class SchemaChange extends Handler<DDLEvent> {
 
     @Override
     public Processed apply(DDLEvent e) {
-        System.out.println(e);
+        System.out.println(e.toJSON());
         return new Processed(e);
     }
 

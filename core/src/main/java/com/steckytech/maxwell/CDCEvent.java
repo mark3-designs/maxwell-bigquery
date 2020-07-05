@@ -26,16 +26,17 @@ public class CDCEvent {
     public final String dataset;
     public final String database;
     public final String table;
-    public final long schema_id;
+    public final Long schema_id;
     public final Map<String, Object> row;
     public final Map<String, Object> old;
     public final Position position;
     public final Position nextPosition;
 
+    private final MaxwellContext context;
     private final AbstractAsyncProducer.CallbackCompleter completer;
     private final RowMap data;
 
-    public CDCEvent(String dataset, RowMap data, AbstractAsyncProducer.CallbackCompleter completer) {
+    public CDCEvent(MaxwellContext context, String dataset, RowMap data, AbstractAsyncProducer.CallbackCompleter completer) {
         this.type = MessageType.valueOf(data.getRowType());
 
         this.database = data.getDatabase();
@@ -47,7 +48,8 @@ public class CDCEvent {
         this.data = data;
         this.completer = completer;
 
-        this.schema_id = data.getSchemaId();
+        this.context = context;
+        this.schema_id = data == null ? null : data.getSchemaId();
 
         this.row = Collections.unmodifiableMap(data.getData());
         this.old = Collections.unmodifiableMap(data.getOldData());
@@ -60,6 +62,15 @@ public class CDCEvent {
         try {
             return data.pkToJson(RowMap.KeyFormat.ARRAY);
         } catch (Exception x) {
+            return null;
+        }
+    }
+
+    public String toJSON() {
+        try {
+            return data.toJSON(context.getConfig().outputConfig);
+        } catch (Exception x) {
+            LOG.error("JSON Encode Failed: "+ x.getMessage(), x);
             return null;
         }
     }

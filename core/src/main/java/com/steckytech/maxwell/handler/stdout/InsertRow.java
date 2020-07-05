@@ -13,9 +13,7 @@ public class InsertRow extends Handler<CDCEvent> {
 
     @Override
     public Processed apply(CDCEvent e) {
-        System.out.println(getClass().getSimpleName() +"\n"+ e);
-
-
+        System.out.println(e.toJSON());
         return new Processed(e);
     }
 

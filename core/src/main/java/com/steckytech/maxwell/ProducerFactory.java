@@ -1,7 +1,7 @@
 package com.steckytech.maxwell;
 
 import com.steckytech.maxwell.cdc.MessageHandler;
-import com.steckytech.maxwell.producer.CDCStream;
+import com.steckytech.maxwell.producer.Stream;
 import com.steckytech.maxwell.producer.Settings;
 import com.zendesk.maxwell.MaxwellContext;
 import com.zendesk.maxwell.producer.AbstractProducer;
@@ -27,7 +27,7 @@ public class ProducerFactory implements com.zendesk.maxwell.producer.ProducerFac
                config.ddlHandler()
         );
 
-        CDCStream producer = new CDCStream(context, new DatasetMap(config.projectId(), config.datasetMap()), handler);
+        Stream producer = new Stream(context, new DatasetMap(config.projectId(), config.datasetMap()), handler);
 
         return producer;
     }
