@@ -1,4 +1,5 @@
-rootProject.name = 'maxwell-bq-producer'
-include 'maxwell'
+rootProject.name = 'maxwell-stream'
+//include 'maxwell'
 include 'core'
+include 'spark'
 

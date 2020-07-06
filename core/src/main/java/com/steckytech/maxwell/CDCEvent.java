@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CDCEvent {
@@ -58,9 +59,9 @@ public class CDCEvent {
 
     }
 
-    public Object getPrimaryKey() {
+    public List<String> getPrimaryKey() {
         try {
-            return data.pkToJson(RowMap.KeyFormat.ARRAY);
+            return data.pkColumns();
         } catch (Exception x) {
             return null;
         }
@@ -95,6 +96,8 @@ public class CDCEvent {
         obj.put("database", data.getDatabase());
         obj.put("table", data.getTable());
         obj.put("server", data.getServerId());
+        obj.put("type", type);
+        obj.put("pk_columns", getPrimaryKey());
 
         Map<String, Object> position = new HashMap<>();
         position.put("current", data.getPosition().toCommandline());
@@ -102,7 +105,6 @@ public class CDCEvent {
 
         obj.put("position", position);
 
-        obj.put("type", type);
 
         if (data.getData().size() > 0) {
             obj.put("columns", data.getData().keySet());
