@@ -8,7 +8,8 @@ trait InitSpark {
 
   val session = SparkSession.builder()
     .appName("maxwell")
-    .master("local[4]")    // url of spark server
+    .master("spark://hadoop04:7077")    // url of spark server
+    //.master("local[2]")    // url of spark server
     .getOrCreate()
 
   /*

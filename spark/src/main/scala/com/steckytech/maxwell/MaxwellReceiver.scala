@@ -1,32 +1,25 @@
 package com.steckytech.maxwell
 
-import com.zendesk.maxwell.MaxwellContext
-import org.apache.spark.SparkContext
+import java.util.concurrent.BlockingQueue
+
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.receiver.Receiver
 
 import scala.collection.mutable.ArrayBuffer
+import scala.reflect.internal.util.Collections
 
 class Metadata() {
   val timestamp:Long = System.currentTimeMillis()
 }
 
-object MaxwellReceiver {
+class MaxwellReceiver(q:BlockingQueue[String]) extends Receiver[String](StorageLevel.MEMORY_ONLY) {
 
-}
-
-class MaxwellReceiver(maxwell:MaxwellContext) extends Receiver[String](StorageLevel.MEMORY_ONLY) {
-
-  var thread:Thread= null
-  var running:Boolean= false
-  var q:Seq[String]= null
-
-  def init(sc: SparkContext, stream: StreamingContext, queue: Seq[String]):Unit = {
-    this.q = queue
-  }
+  // val LOG:Logger = SparkRunner.LOGGER
+  var thread:Thread = null
 
   def onStart() {
+    println("Startup")
+
     // Setup stuff (start threads, open sockets, etc.) to start receiving data.
     // Must start new thread to receive data, as onStart() must be non-blocking.
 
@@ -39,32 +32,31 @@ class MaxwellReceiver(maxwell:MaxwellContext) extends Receiver[String](StorageLe
 
 
     // Start the thread that receives data over a connection
-    running= true
-    thread= new Thread("maxwell-receiver") {
+    this.thread= new Thread("maxwell-receiver") {
       override def run() {
-        receive()
+        println("Receiver Thread Initializing")
+        while (!isStopped()) {
+
+          val items: ArrayBuffer[String] = new ArrayBuffer[String]()
+          var item: String = null
+          item = q.poll()
+          if (item != null) {
+            store(new ArrayBuffer[String]() + item)
+            println(items.size + " message stored")
+          }
+        }
+        println("Receiver Thread Stopped")
       }
     }
 
-    thread.start()
+    this.thread.start()
 
-
-  }
-
-  private def receive(): Unit = {
-    while (running) {
-      q match {
-        case q if (q != null) =>
-          val items: Seq[String] = q.take(q.size)
-          store(ArrayBuffer[String]() ++ items.toArray)
-      }
-    }
   }
 
   def onStop() {
     // Cleanup stuff (stop threads, close sockets, etc.) to stop receiving data.
-    maxwell.terminate()
-    running= false
-    thread.join()
+    if (this.thread != null) {
+      this.thread.join()
+    }
   }
 }
