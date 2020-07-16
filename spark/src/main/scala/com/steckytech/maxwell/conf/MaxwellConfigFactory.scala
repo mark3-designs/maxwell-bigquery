@@ -1,7 +1,8 @@
-package com.steckytech.maxwell
+package com.steckytech.maxwell.conf
 
 import com.zendesk.maxwell.MaxwellConfig
 
+@Deprecated
 class MaxwellConfigFactory extends Serializable {
 
   val args:List[String] = List[String]()
@@ -16,10 +17,3 @@ class MaxwellConfigFactory extends Serializable {
   }
 }
 
-/*
-object MaxwellConfigFactory {
-  def from(args:Array[String]): MaxwellConfig = {
-    new MaxwellConfigFactory().build(args)
-  }
-}
- */

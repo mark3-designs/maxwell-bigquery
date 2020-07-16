@@ -1,4 +1,4 @@
-package com.steckytech.maxwell
+package com.steckytech.maxwell.conf
 
 import com.zendesk.maxwell.MaxwellConfig
 

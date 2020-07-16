@@ -1,6 +1,8 @@
 package com.steckytech.maxwell
 
+import com.steckytech.maxwell.spark.MaxwellReceiver
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.slf4j.LoggerFactory
 
@@ -14,16 +16,15 @@ object SparkRunner {
 
     val session:SparkSession= SparkSession.builder()
       .appName("maxwell")
-      // .config("spark.kryo.registration", com.steckytech.maxwell.kryo.Registrator.getClass.getCanonicalName)
-      //.master("spark://hadoop04:7077")    // url of spark server
-      //.master("local[2]")    // url of spark server
+      .config("spark.driver.memory", "1g")
+      .config("spark.executor.memory", "768m")
       .getOrCreate()
 
     val streamingContext = new StreamingContext(session.sparkContext, Seconds(5))
 
-    val cdc = streamingContext.receiverStream(new MaxwellReceiver(args)); // maxwell.receiver)
+    val cdc = streamingContext.receiverStream(new MaxwellReceiver(args));
 
-    cdc.repartition(4).map(r => "RECORD =======\n"+ r +"\n").print
+    process(session, cdc).saveAsTextFiles("/user/brad/result", "json")
 
     streamingContext.start()
 
@@ -31,5 +32,12 @@ object SparkRunner {
 
   }
 
+  def process(session: SparkSession, stream:ReceiverInputDStream[String]): ReceiverInputDStream[String] = {
+    stream.repartition(4).map(r => handl(r))
+    stream
+  }
+
+  def handl(json:String): Unit = {
+  }
 }
 
