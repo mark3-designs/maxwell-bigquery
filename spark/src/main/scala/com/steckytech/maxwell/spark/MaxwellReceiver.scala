@@ -5,26 +5,23 @@ import java.rmi.ServerException
 import java.sql.SQLException
 
 import com.djdch.log4j.StaticShutdownCallbackRegistry
-import com.steckytech.maxwell.Filter
+import com.steckytech.maxwell.conf.MaxwellConfigFactory
+import com.zendesk.maxwell.producer.ProducerFactory
 import com.zendesk.maxwell.{Maxwell, MaxwellConfig, MaxwellContext, MaxwellWithContext}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable
 
+abstract class MaxwellReceiver[T](configFactory: MaxwellConfigFactory, storage:StorageLevel) extends Receiver[T](storage) with Serializable {
 
-class MaxwellReceiver(args:Array[String]) extends Receiver[String](StorageLevel.MEMORY_ONLY_2) with Serializable {
+  var maxwell:(Maxwell,Thread,Thread) = (null,null,null)
 
-
-
-  var maxwell:(Maxwell,Thread) = (null,null)
-
-  var filters:mutable.MutableList[Filter] = mutable.MutableList[Filter]()
 
   def onStart() {
-    /* onStart() must be non-blocking */
-    maxwell = bootMaxwell(args)
+    // onStart() must be non-blocking
+    maxwell = bootMaxwell(configFactory)
+
   }
 
   def onStop() {
@@ -32,22 +29,19 @@ class MaxwellReceiver(args:Array[String]) extends Receiver[String](StorageLevel.
     maxwell._2.join()
   }
 
+  def getProducerFactory(): ProducerFactory
 
-  def withFilter(filter:Filter): MaxwellReceiver = {
-    filters += filter
-    this
-  }
-
-
-  private def bootMaxwell(args:Array[String]): (Maxwell,Thread) = {
+  private def bootMaxwell(configFactory: MaxwellConfigFactory): (Maxwell,Thread, Thread) = {
     val LOG = LoggerFactory.getLogger(this.getClass)
+    val receiver = this
 
     try {
-      val config:MaxwellConfig = new MaxwellConfig(args)
+      // construct the maxwell configuration object inside the receiver thread
+      val config:MaxwellConfig = configFactory.build()
 
       // set maxwell's configuration to our factory that has a reference to this receiver
       // the maxwell producer will call `.store(data)` on this receiver
-      config.producerFactory = new JSONProducerFactory(this, filters.toList)
+      config.producerFactory = getProducerFactory()
 
       val context:MaxwellContext = new MaxwellContext(config);
 
@@ -62,8 +56,24 @@ class MaxwellReceiver(args:Array[String]) extends Receiver[String](StorageLevel.
         }
       })
 
+      /*
+      val monitor: Thread = new Thread() {
+        override def run(): Unit = {
+          while (isStarted()) {
+            Thread.sleep(3000)
+            if (!thread.isAlive) {
+              maxwell.terminate()
+              receiver.stop("maxwell thread died")
+            }
+          }
+        }
+      }
+
+       */
+
       thread.start()
-      return (maxwell,thread)
+      //monitor.start()
+      return (maxwell,thread,null)
 
     } catch {
       case e:SQLException =>
@@ -86,7 +96,7 @@ class MaxwellReceiver(args:Array[String]) extends Receiver[String](StorageLevel.
         System.exit(3);
     }
 
-    (null,null)
+    (null,null,null)
 
   }
 }

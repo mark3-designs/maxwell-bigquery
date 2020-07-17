@@ -4,6 +4,6 @@ import com.zendesk.maxwell.MaxwellConfig
 
 class MaxwellFactory(args:Array[String]) {
 
-  val config:MaxwellConfig = new MaxwellConfigFactory().build(args)
+  val config:MaxwellConfig = new MaxwellConfigFactory(args).build
 
 }
