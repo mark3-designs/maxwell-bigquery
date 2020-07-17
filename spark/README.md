@@ -1,17 +1,16 @@
 # Maxwell-Spark
 
-
-# Build Dependencies
+## Build Dependencies
 
 This spark project for Maxwell depends on a forked build of [Maxwell](https://github.com/mark3-designs/maxwell/tree/mark3-enhancements)
 
-## Build local Maxwell artifact
+### Build local Maxwell artifact
 
 ```
 cd ../maxwell && mvn clean install -DskipTests
 ```
 
-# Spark-Submit
+## Spark-Submit
 
 ```
 #!/bin/bash
@@ -72,8 +71,6 @@ object SparkRunner {
 
     val session:SparkSession= SparkSession.builder()
       .appName("maxwell")
-      .config("spark.driver.memory", "512g")
-      .config("spark.executor.memory", "512m")
       .master("local[4]")
       .getOrCreate()
 
