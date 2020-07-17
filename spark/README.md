@@ -2,6 +2,10 @@
 
 # Build Dependencies
 
+This spark project for Maxwell depends on a forked build of [https://github.com/mark3-designs/maxwell/tree/mark3-enhancements](Maxwell)
+
+Build Maxwell with maven
+
 # Spark-Submit
 
 ```
