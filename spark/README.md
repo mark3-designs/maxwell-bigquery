@@ -7,7 +7,9 @@
 ```
 #!/bin/bash
 
-export EXECUTOR_MEM="1024M"
+EXECUTOR_MEM="1024M"
+SPARK_CLUSTER="local[4]"
+EXECUTOR_COUNT=4
 
 ARGS="
 --schema_user=maxwell
@@ -32,18 +34,17 @@ ARGS="
 --jdbc_options=serverTimezone=US/Mountain
 "
 
-SPARK_CLUSTER="local[4]"
 
 spark-submit \
-  --num-executors 16 \
-  --executor-memory $(EXECUTOR_MEM) \
+  --num-executors $EXECUTOR_COUNT \
+  --executor-memory $EXECUTOR_MEM \
   --master $SPARK_CLUSTER \
   --class com.steckytech.maxwell.SparkRunner \
-  hdfs://hadoop02:9000/user/brad/maxwell-spark-1.0.jar $ARGS
+  /path-to/maxwell-spark-1.0.jar $ARGS
 ```
 
 
-# Example
+# Simple Example
 
 ```
 import com.steckytech.maxwell.conf.MaxwellConfigFactory
