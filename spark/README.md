@@ -1,10 +1,15 @@
 # Maxwell-Spark
 
+
 # Build Dependencies
 
-This spark project for Maxwell depends on a forked build of [https://github.com/mark3-designs/maxwell/tree/mark3-enhancements](Maxwell)
+This spark project for Maxwell depends on a forked build of [Maxwell](https://github.com/mark3-designs/maxwell/tree/mark3-enhancements)
 
-Build Maxwell with maven
+## Build local Maxwell artifact
+
+```
+cd ../maxwell && mvn clean install -DskipTests
+```
 
 # Spark-Submit
 
@@ -96,3 +101,11 @@ object SparkRunner {
 }
 ```
 
+# Notes
+
+## Checkout git-submodules
+This project contains git-submodules, be sure to initialize them prior to building.
+
+```
+git submodule update --init
+```
