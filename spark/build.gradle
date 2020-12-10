@@ -1,6 +1,7 @@
 plugins {
 }
 
+apply plugin: 'maven-publish'
 apply plugin: 'scala'
 
 sourceCompatibility = 1.8
@@ -60,3 +61,24 @@ task run(type: JavaExec, dependsOn: classes) {
     classpath sourceSets.main.runtimeClasspath
     classpath configurations.runtime
 }
+
+try {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url = version.endsWith('SNAPSHOT') ? "$repo_snapshots" : "$repo_releases"
+                credentials {
+                    username = "$repo_user"
+                    password = "$repo_pass"
+                }
+                authentication { basic(BasicAuthentication) }
+            }
+        }
+    }
+} catch (Exception ignore) {}
+

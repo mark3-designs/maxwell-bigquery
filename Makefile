@@ -21,4 +21,4 @@ submit:
 
 
 
-.PHONY:`build install test-maxwell
+.PHONY:	build install test-maxwell

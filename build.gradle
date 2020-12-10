@@ -2,6 +2,8 @@ plugins {
     id 'java'
 }
 
+apply plugin: 'maven-publish'
+
 group 'com.steckytech'
 version '1.0-SNAPSHOT'
 
@@ -28,5 +30,24 @@ dependencies {
 
 }
 
-jar
+
+try {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url = version.endsWith('SNAPSHOT') ? "$repo_snapshots" : "$repo_releases"
+                credentials {
+                    username = "$repo_user"
+                    password = "$repo_pass"
+                }
+                authentication { basic(BasicAuthentication) }
+            }
+        }
+    }
+} catch (Exception ignore) {}
 
