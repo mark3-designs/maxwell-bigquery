@@ -10,7 +10,9 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    maven { url "http://artifacts.cyberdyne/repository/cyberdyne" }
+    maven { url "http://artifacts.cyberdyne/repository/maven-cache" }
+    // mavenCentral()
 }
 
 dependencies {
