@@ -1,8 +1,6 @@
 plugins {
-    id 'java'
 }
 
-apply plugin: 'java'
 apply plugin: 'scala'
 
 sourceCompatibility = 1.8
@@ -34,12 +32,6 @@ dependencies {
     provided 'org.apache.spark:spark-sql_2.12:2.4.6'
     provided 'org.apache.spark:spark-streaming_2.12:2.4.6'
 
-    //compile 'org.apache.spark:spark-mllib_2.12:2.1.0'
-    //compile 'org.apache.spark:spark-streaming-flume-assembly_2.12:2.1.0'
-    //compile 'org.apache.spark:spark-graphx_2.12:2.1.0'
-    //compile 'org.apache.spark:spark-launcher_2.12:2.1.0'
-    //compile 'org.apache.spark:spark-catalyst_2.12:2.1.0'
-
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-scala_2.12', version: '2.11.1'
 
     compile ('com.steckytech.maxwell:core:1.27.0') {
@@ -54,7 +46,6 @@ dependencies {
 
 jar {
     manifest {
-
         attributes "Main-Class": "com.steckytech.maxwell.SparkRunner"
     }
 

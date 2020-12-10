@@ -1,5 +1,5 @@
 rootProject.name = 'maxwell-stream'
-//include 'maxwell'
 include 'core'
 include 'spark'
+include 'dist'
 

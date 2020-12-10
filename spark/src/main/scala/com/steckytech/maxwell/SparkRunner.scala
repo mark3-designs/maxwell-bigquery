@@ -16,13 +16,10 @@ object SparkRunner {
 
     val session:SparkSession= SparkSession.builder()
       .appName("maxwell")
-      .config("spark.driver.memory", "512g")
-      .config("spark.executor.memory", "512m")
-      // .master("local[4]")
-
+      .master("yarn")
       .getOrCreate()
 
-    val destination = "binlog-stream"
+    val destination = "/user/brad/binlog-stream"
 
     val batchDuration = Seconds(30)
 
@@ -34,8 +31,14 @@ object SparkRunner {
     // create stream
     val stream = streamingContext.receiverStream(receiver)
 
+    LOGGER.info("Reading Stream")
+
     // write to hdfs/file output
+    // stream.foreachRDD((data, time) => println(time +" "+ data.collect().toList))
+
     stream.saveAsTextFiles(destination, "json")
+
+    LOGGER.info("Saving Stream to "+ destination)
 
     streamingContext.start()
 

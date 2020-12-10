@@ -1,6 +1,5 @@
 package com.steckytech.maxwell.spark
 
-import com.steckytech.maxwell.Filter
 import com.steckytech.maxwell.mysql.BinlogEvent
 import com.zendesk.maxwell.MaxwellContext
 import com.zendesk.maxwell.producer.AbstractProducer
@@ -23,11 +22,11 @@ class BinlogProducer(receiver: BinlogReceiver, maxwell:MaxwellContext) extends A
     val database = item.get("database").asInstanceOf[String]
     val table = item.get("table").asInstanceOf[String]
     change match {
-      case c if (c == "database-alter") =>
-      case c if (c == "table-drop") =>
-      case c if (c == "table-create") =>
-      case c if (c == "table-alter") =>
-      case c if (c == "insert") =>
+      case "database-alter" =>
+      case "table-drop" =>
+      case "table-create" =>
+      case "table-alter" =>
+      case "insert" =>
     }
     receiver.store(new BinlogEvent(item))
     maxwell.setPosition(r.getNextPosition)
