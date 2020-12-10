@@ -6,9 +6,32 @@ plugins {
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    maven { url "http://artifacts.cyberdyne/repository/cyberdyne" }
+    maven { url "http://artifacts.cyberdyne/repository/maven-cache" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+
+try {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url = version.endsWith('SNAPSHOT') ? "$repo_snapshots" : "$repo_releases"
+                credentials {
+                    username = "$repo_user"
+                    password = "$repo_pass"
+                }
+                authentication { basic(BasicAuthentication) }
+            }
+        }
+    }
+} catch (Exception ignore) {}
+
